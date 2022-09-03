@@ -1,0 +1,61 @@
+--------------THIS IS A LOG FOR MY FUTURE SELF-----
+
+TODO: DOCUMENT REACT INTERFACE
+
+
+--------------CONECTING APP TO API------------------------
+
+Para hacer las peticiones vamos a usar axios, una librería que facilita las peticiones y solo tienes que poner: 
+axios.get(url)
+  .then(haz esto)
+  .cath(haz esto otro)
+
+  además permite pasarle los parametros como objeto en lugar de como url eso l hace más fácil, en lugar de poner /api/user?name=paco&age=24&home=casagrande&hair=corto
+  puedes poner:
+  axios.get("/user", {
+    params:{
+      name:paco,
+      age:25,
+      home:...
+    }
+  })
+
+  Para recuperar los post en la pantalla de carga creamos una variable post con su hook usestate y luego usamos useeffect, que es como component did mount, es decir que se llama cada vez que pones ese elemento en el html para hacer una petición a la api y recuperar los post
+  en useeffect se declara una función para recuperar eso porque como es asincrono necesitas decirle async si no es un lío, entonces lo haces todo en una función async y luego la llamas
+
+  IMPORTANTE, para conectar con la api debes ir al package json y añadirle:  "proxy": "http://localhost:5000/api/" ah y acuerdate de que para que funcione tienes que ir en otro terminal a encender el servidor si no la app no estará escuchando el puerto
+
+  Una vez recuperados los props se los pasas como propiedad al componente post que hay en la pagina home, así luego dentro del componente posts puedes decirle que ponga uno por cada, y le pasas ese post en concreto por props, un foreach de toda la vida, luego en el componente concreto del post en su html le asignas esos datos que le llegan como propiedades
+
+  luego en el post usamos esas propiedades para el titulo, la fecha y las categorías, luego usamos un objeto <Link> de react router dom para crear un enlace que lleva a la pagina single post y el link es:  <Link to={`/post/${post._id}`} className='link' > así podemos usar el id del post para poner el contenido en la página con una consulta a la API
+
+  Para cargar esos datos hay un metodo guay de react llamado useLocation que te da la url, así dentro del post podemos cogerla para pedir los datos a la API con el id que va en la url
+
+  usando location.pathname.split('/') podemos separarlo por barras, y el 2 elemento será el id
+
+  como todavia no estoy muy acostumbrado a useeffect voy a copiar la función que recupera los datos del post y me la explico a mi mismo, supongo que eso es lo de ser self taught programer, la función es: 
+  const location = useLocation()
+  const path = location.pathname.split("/")[2];
+
+  useEffect(()=> {
+    const getPost = async () =>{
+      const res = await axios.get('/posts/'+path)
+      console.log(res)
+    }
+    getPost()
+  },[path])
+
+  Con location cogemos la Url con path la separamos por el / y cogemos el elemento que corresponde al id, luego con useEffect el segundo parametro  [path] lo que dice es: cuando path cambia me lo llamas, así si se vuelve a montar el componente pero el path es el mismo no vuelve a hacer la petición y eso que te ahorras, luego usamos axios para hacer una petición a la api con el camino añadiendole el id, y por ultimo ejecutamos esa función porque si la dejamos declarada pero sin llamar no hace nada, una vez tienes los datos en res, puedes ir al return a ponerlos en titulo, imagen y tal
+
+  Cómo hacemos para que cuando se pinche en el nombre de un user salgan sus post, lo que hacemos es redirigir a home pero añadiendo por url el id del autor, dentro de home, en home usamos location para recoger la url y sus queries y le asignamos ese id a una variable, en el sitio donde  buscabamos todos los posts añadimos esa id, si está vacía pues nada, nos recupera todos, si lleva id nos recupera los de esa id, esto funciona porque en la api en la parte de get all post añadimos la posibilidad de recuperarlos también usando querys en la url
+
+  en register lo que hacemos es crear variables y actualizarlas en el onchange y luego tanto en el botón como en el form ponemos un onsubmit, en la función on submit cogemos esas variables llamamos a la api con register y luego redirigimos a login
+
+  MANTENER EL ESTADO
+  Aquí no usa JWT para generar un token y comprobarlo en las secciones protegidas, en su lugar usa context API, esto es un poco como redux, mantiene el estado de toda la aplicación entonces podemos cuandohaces loggin pone usuario loggeado y ya puedes comprobarlo automáticamente en todas las partes protegidas, cuando haces logout ese estado cambia y vuelves a estar sin acceso, sigue siendo algo chapucero porque los tokens caducan y creo que son más seguros pero oye es una forma fácil de manejar el acceso
+
+  context funciona con un contexto digamos padre que permite el acceso a todos sus hijos, este será el Provider del contexto, los hijos serán consumidores
+
+  Por algún motivo en el tutorial usa un reducer que es algo de redux, he googleado y al parecer cuando se trata de apps pequeñas es mejor context porque es más facil de configurar pero en cosas grandes va mejor redux porque luego al mantenerlo es más cómodo
+
+  Hace un archivo con acciones que tienen un tipo y en caso de login exitoso un payload, imagino que luego estas acciones se pueden llamar para modificar el contexto aunque aun no entiendo

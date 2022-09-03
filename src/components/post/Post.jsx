@@ -1,26 +1,42 @@
 import React from "react";
+import {Link} from 'react-router-dom'
 import './post.css'
 
 
-export default function Post(){
+export default function Post({post}){
   return (
     <div className="post">
+      {post.photo ? (
       <img className="postImg"
-      src="https://i.pinimg.com/originals/6e/d9/77/6ed97796206b9ba37f5ed425295944ee.jpg"
+      src={post.photo}
       alt="post " 
       />
+      ) : (
+        <img className="postImg"
+      src='https://images.unsplash.com/photo-1605187151664-9d89904d62d0?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxzZWFyY2h8MXx8Y29mZmVlJTIwYWVzdGhldGljfGVufDB8fDB8fA%3D%3D&w=1000&q=80'
+      alt="post " 
+      />
+      )}
       <div className="postInfo">
         <div className="postCats">
-          <span className="postCat">Music</span>
-          <span className="postCat">Life</span>
+          {post.categories.map(c => (
+        
+            <span className="postCat">{c}</span>
+          ))}
         </div>
+        <Link to={`/post/${post._id}`} className='link' >
         <span className="postTitle">
-          Lorem ipsum dolor sit amet
+          {post.title}
         </span>
+        </Link>
         <hr/>
-        <span className="postDate">1 hour ago</span>
+        <span className="postDate">
+          {new Date(post.createdAt).toDateString()}
+        </span>
       </div>
-      <p className="postDesc">Lorem, ipsum dolor sit amet consectetur adipisicing elit. Quod magni, commodi adipisci dicta quam magnam doloribus error accusamus sunt velit distinctio. Porro ea, doloremque magnam asperiores odio sunt fuga adipisci.Lorem, ipsum dolor sit amet consectetur adipisicing elit. Quod magni, commodi adipisci dicta quam magnam doloribus error accusamus sunt velit distinctio. Porro ea, doloremque magnam asperiores odio sunt fuga adipisci.Lorem, ipsum dolor sit amet consectetur adipisicing elit. Quod magni, commodi adipisci dicta quam magnam doloribus error accusamus sunt velit distinctio. Porro ea, doloremque magnam asperiores odio sunt fuga adipisci.</p>
+      <p className="postDesc">
+        {post.desc}
+      </p>
     </div>
   )
 }
