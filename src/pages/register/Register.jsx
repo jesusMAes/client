@@ -18,6 +18,7 @@ export default function Register (){
         email:email,
         password:password
       })
+      
       res.data && window.location.replace("/login")
     } catch (err) {
       setError(true)

@@ -13,11 +13,13 @@ import {
   Navigate,
   Link
 } from "react-router-dom"
+import { useContext } from "react";
+import { Context } from "./context/Context";
 
 
 
 function App() {
-  const user = false
+  const {user} = useContext(Context)
   return (
     <Router>
       <TopBar />
@@ -28,7 +30,7 @@ function App() {
        user ? <Navigate to="/"/>: <Register/> } />
 
        <Route path="/login" element={
-       user ? <Login/> : <Navigate to="/register"/>} />
+        <Login/> }/>
 
        <Route path="/write" element={
        user ? <Write/> : <Navigate to="/register"/>} />

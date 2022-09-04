@@ -1,14 +1,16 @@
 import React from "react";
 import {Link} from 'react-router-dom'
-import './post.css'
+import './post.css';
+
 
 
 export default function Post({post}){
+  const publicFolder = 'http://localhost:5000/images/'
   return (
     <div className="post">
       {post.photo ? (
       <img className="postImg"
-      src={post.photo}
+      src={publicFolder+ post.photo}
       alt="post " 
       />
       ) : (
@@ -21,7 +23,7 @@ export default function Post({post}){
         <div className="postCats">
           {post.categories.map(c => (
         
-            <span className="postCat">{c}</span>
+            <span className="postCat" key={c}>{c}</span>
           ))}
         </div>
         <Link to={`/post/${post._id}`} className='link' >
